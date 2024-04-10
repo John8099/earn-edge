@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "watch:portal": "node-sass --w ./scss/portal.scss ./css/portal.css"
+  },
+  "dependencies": {
+    "node-sass": "^9.0.0"
+  }
+}
