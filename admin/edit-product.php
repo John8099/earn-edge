@@ -42,7 +42,7 @@
                 ?>
                 <form id="form-edit-product" class="mt-5" enctype="multipart/form-data">
                   <input type="text" name="id" value="<?= $product->id ?>" hidden readonly>
-                  
+
                   <div class="form-group mb-3">
                     <label for="product_image" class="form-label">Product Image</label>
                     <input type="file" class="form-control" name="product_image" id="product_image" accept='image/*'>
@@ -79,7 +79,7 @@
 
                   <div class="form-group mb-3">
                     <label class="form-label" for="description">Description</label>
-                    <textarea name="description" id="description" class="form-control" style="height: 100px;"><?= nl2br($product->description) ?></textarea>
+                    <textarea name="description" id="description" class="form-control" style="height: 100px;"><?= str_replace("<br />", "\n", nl2br($product->description)) ?></textarea>
                   </div>
 
                   <div class="d-flex justify-content-center">

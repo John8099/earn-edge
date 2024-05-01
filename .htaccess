@@ -1,7 +1,7 @@
+ Header set Access-Control-Allow-Origin '*'
+  
 <IfModule mod_rewrite.c>
 
-  Header set Access-Control-Allow-Origin "*"
-  
   Options -Indexes 
 
   RewriteEngine on

@@ -43,25 +43,31 @@
                 <thead>
                   <tr>
                     <th class="text-start">Image</th>
+                    <th class="text-start">Customer</th>
                     <th class="text-start">Product name</th>
                     <th class="text-start">Quantity</th>
                     <th class="text-start">Price</th>
+                    <th class="text-start">Date Ordered</th>
                   </tr>
                 </thead>
                 <tbody>
                   <?php
                   $total = 0;
                   $order_details = $helpers->select_all_with_params("order_details", "order_id='$_GET[id]'");
+
                   foreach ($order_details as $order_detail) :
                     $product = $helpers->select_all_individual("products", "id='$order_detail->product_id'");
                     $category = $helpers->select_all_individual("categories", "id='$product->category_id'");
-                    $total += $product->selling_price;
+                    $total += $order_detail->quantity * $product->selling_price;
                   ?>
                     <tr>
                       <td style="vertical-align: middle" class="cell text-start">
                         <a href="<?= $product->product_img ?>" target="_blank">
                           <img src="<?= $product->product_img ?>" alt=" " style="width:150px" class="img-responsive" />
                         </a>
+                      </td>
+                      <td style="vertical-align: middle" class="cell text-start">
+                        <?= $helpers->get_full_name($orderData->user_id) ?>
                       </td>
                       <td style="vertical-align: middle" class="cell text-start">
                         <?= $product->name ?>
@@ -75,7 +81,10 @@
                         <?= $order_detail->quantity ?>
                       </td>
                       <td style="vertical-align: middle" class="cell text-start">
-                        ₱ <?= number_format($product->selling_price, 2) ?>
+                        ₱ <?= number_format(($order_detail->quantity * $product->selling_price), 2) ?>
+                      </td>
+                      <td style="vertical-align: middle" class="cell text-start">
+                        <?= date("Y-m-d", strtotime($orderData->date_created)) ?>
                       </td>
                     </tr>
                   <?php endforeach; ?>
@@ -95,7 +104,8 @@
                 <?php elseif ($pageTitle == "Preparing Order Details") : ?>
                   <button class="btn btn-warning" onclick="handleOrderUpdate(`<?= $_GET['id'] ?>`, 'to_pickup')">Set To Pickup</button>
                 <?php elseif ($pageTitle == "To Pick-up Order Details") : ?>
-                  <button class="btn btn-success" onclick="handleOrderUpdate(`<?= $_GET['id'] ?>`, 'paid')">Set Paid</button>
+                  <button class="btn btn-success me-2" onclick="handleOrderUpdate(`<?= $_GET['id'] ?>`, 'paid')">Set Paid</button>
+                  <button class="btn btn-danger me-2" onclick="handleOrderUpdate(`<?= $_GET['id'] ?>`, 'not_claimed')">Set Not Claimed</button>
                 <?php endif; ?>
 
               </div>

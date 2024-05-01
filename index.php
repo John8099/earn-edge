@@ -12,21 +12,21 @@
   <!-- main-slider -->
   <ul id="demo1">
     <li>
-      <img src="<?= SERVER_NAME . "/assets/images/11.jpg" ?>" alt="" />
+      <img src="<?= SERVER_NAME . "/public/logo-1.jpg" ?>" style="filter: brightness(0.3);" />
       <!--Slider Description example-->
       <div class="slide-desc">
         <h3>Buy Rice Products Are Now On Line With Us</h3>
       </div>
     </li>
     <li>
-      <img src="<?= SERVER_NAME . "/assets/images/22.jpg" ?>" alt="" />
+      <img src="<?= SERVER_NAME . "/public/logo-2.jpg" ?>" style="filter: brightness(0.3);" />
       <div class="slide-desc">
         <h3>Whole Spices Products Are Now On Line With Us</h3>
       </div>
     </li>
 
     <li>
-      <img src="<?= SERVER_NAME . "/assets/images/44.jpg" ?>" alt="" />
+      <img src="<?= SERVER_NAME . "/public/logo-3.jpg" ?>" style="filter: brightness(0.3);" />
       <div class="slide-desc">
         <h3>Whole Spices Products Are Now On Line With Us</h3>
       </div>

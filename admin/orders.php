@@ -44,6 +44,8 @@
                     <tr>
                       <th class="text-start">Order Number</th>
                       <th class="text-start">Customer</th>
+                      <th class="text-start">Items</th>
+                      <th class="text-start">Total</th>
                       <th class="text-start">Date</th>
                       <th class="text-start">Action</th>
                     </tr>
@@ -52,15 +54,33 @@
                     <?php
                     $orders = $helpers->select_all_with_params("orders", "status='pending'");
                     foreach ($orders as $order) :
+                      $total = 0.00;
+                      $items = 0;
+
+                      $order_details = $helpers->select_all_with_params("order_details", "order_id='$order->id'");
+                      if (count($order_details) > 0) {
+                        foreach ($order_details as $order_detail) {
+                          $product = $helpers->select_all_individual("products", "id='$order_detail->product_id'");
+                          $total += $order_detail->quantity * $product->selling_price;
+                          $items += $order_detail->quantity;
+                        }
+                      }
                     ?>
                       <tr>
                         <td style="vertical-align: middle" class="cell text-start"><?= $order->order_number ?></td>
                         <td style="vertical-align: middle" class="cell text-start"><?= $helpers->get_full_name($order->user_id) ?></td>
                         <td style="vertical-align: middle" class="cell text-start">
+                          <?= $items ?>
+                        </td>
+                        <td style="vertical-align: middle" class="cell text-start">
+                          ₱ <?= number_format($total, 2) ?>
+                        </td>
+                        <td style="vertical-align: middle" class="cell text-start">
                           <?= date("Y-m-d", strtotime($order->date_modified)) ?>
                         </td>
                         <td style="vertical-align: middle" class="cell text-start">
-                        <a class="btn-sm btn btn-primary" href="<?= SERVER_NAME . "/admin/order-details?id=$order->id&&page=" . urlencode("Order Details") ?>">View</a></td>
+                          <a class="btn-sm btn btn-primary" href="<?= SERVER_NAME . "/admin/order-details?id=$order->id&&page=" . urlencode("Order Details") ?>">View</a>
+                        </td>
                       </tr>
                     <?php endforeach; ?>
                   </tbody>
@@ -78,6 +98,8 @@
                     <tr>
                       <th class="text-start">Order Number</th>
                       <th class="text-start">Customer</th>
+                      <th class="text-start">Items</th>
+                      <th class="text-start">Total</th>
                       <th class="text-start">Date</th>
                       <th class="text-start">Action</th>
                     </tr>
@@ -86,10 +108,27 @@
                     <?php
                     $orders = $helpers->select_all_with_params("orders", "status='preparing'");
                     foreach ($orders as $order) :
+                      $total = 0.00;
+                      $items = 0;
+
+                      $order_details = $helpers->select_all_with_params("order_details", "order_id='$order->id'");
+                      if (count($order_details) > 0) {
+                        foreach ($order_details as $order_detail) {
+                          $product = $helpers->select_all_individual("products", "id='$order_detail->product_id'");
+                          $total += $order_detail->quantity * $product->selling_price;
+                          $items += $order_detail->quantity;
+                        }
+                      }
                     ?>
                       <tr>
                         <td style="vertical-align: middle" class="cell text-start"><?= $order->order_number ?></td>
                         <td style="vertical-align: middle" class="cell text-start"><?= $helpers->get_full_name($order->user_id) ?></td>
+                        <td style="vertical-align: middle" class="cell text-start">
+                          <?= $items ?>
+                        </td>
+                        <td style="vertical-align: middle" class="cell text-start">
+                          ₱ <?= number_format($total, 2) ?>
+                        </td>
                         <td style="vertical-align: middle" class="cell text-start">
                           <?= date("Y-m-d", strtotime($order->date_modified)) ?>
                         </td>
@@ -115,7 +154,7 @@
 
   <?php include("./components/scripts.php") ?>
   <script>
-    const pendingOrdersTableCols = [0, 1, 2];
+    const pendingOrdersTableCols = [0, 1, 2, 3, 4];
     const pendingOrdersTable = $("#pendingOrdersTable").DataTable({
       paging: true,
       lengthChange: true,
@@ -170,7 +209,7 @@
       `,
     });
 
-    const preparingOrderTableCols = [0, 1, 2];
+    const preparingOrderTableCols = [0, 1, 2, 3, 4];
     const preparingOrderTable = $("#preparingOrderTable").DataTable({
       paging: true,
       lengthChange: true,

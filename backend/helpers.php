@@ -88,8 +88,16 @@ class Helpers
       array(
         "title" => "Canceled Orders",
         "config" => array(
-          "icon" => "fa-solid fa-sack-xmark",
+          "icon" => "fa-solid fa-user-xmark",
           "url" => (SERVER_NAME . "/admin/canceled-orders"),
+          "is_dropdown" => false
+        )
+      ),
+      array(
+        "title" => "Not Claimed Orders",
+        "config" => array(
+          "icon" => "fa-solid fa-sack-xmark",
+          "url" => (SERVER_NAME . "/admin/not-claimed-orders"),
           "is_dropdown" => false
         )
       ),
@@ -548,5 +556,12 @@ class Helpers
       json_encode($params)
     );
     exit;
+  }
+
+  function pr($data)
+  {
+    echo "<pre>";
+    print_r($data); // or var_dump($data);
+    echo "</pre>";
   }
 }

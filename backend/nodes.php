@@ -55,6 +55,12 @@ try {
       case "update_profile":
         update_profile();
         break;
+      case "get_week_sales":
+        get_week_sales();
+        break;
+      case "get_week_orders":
+        get_week_orders();
+        break;
       default:
         $response["success"] = false;
         $response["message"] = "Case action not found!";
@@ -65,6 +71,92 @@ try {
   }
 } catch (Exception $e) {
   echo "<script>console.log(`" . ($e->getMessage()) . "`)</script>";
+}
+
+function get_week_orders()
+{
+  global $helpers, $_POST;
+
+  $month = $_POST["month"];
+  $ranges = get_weeks($month, 2024);
+  $orders = array();
+
+  foreach ($ranges as $range) {
+    $explodedRange = explode(" - ", $range);
+
+    $start = date("Y-m-d", strtotime($explodedRange[0]));
+    $end = date("Y-m-d", strtotime($explodedRange[1]));
+
+    $ordersQ = $helpers->select_all_with_params("orders", "status='paid' AND DATE_FORMAT(date_modified, '%Y-%m-%d') BETWEEN '$start' AND '$end'");;
+
+    array_push($orders, count($ordersQ));
+  }
+
+  $response["orders"] = $orders;
+  $helpers->return_response($response);
+}
+
+function get_week_sales()
+{
+  global $helpers, $_POST;
+
+  $month = $_POST["month"];
+  $ranges = get_weeks($month, 2024);
+  $totals = array();
+
+  foreach ($ranges as $range) {
+    $total = 0.00;
+
+    $explodedRange = explode(" - ", $range);
+
+    $start = date("Y-m-d", strtotime($explodedRange[0]));
+    $end = date("Y-m-d", strtotime($explodedRange[1]));
+
+    $orders = $helpers->select_all_with_params("orders", "status='paid' AND DATE_FORMAT(date_modified, '%Y-%m-%d') BETWEEN '$start' AND '$end'");
+
+    if (count($orders) > 0) {
+      foreach ($orders as $order) {
+        $order_details = $helpers->select_all_with_params("order_details", "order_id='$order->id'");
+
+        if (count($order_details) > 0) {
+          foreach ($order_details as $order_detail) {
+            $product = $helpers->select_all_individual("products", "id='$order_detail->product_id'");
+
+            $total += $product->selling_price;
+          }
+        }
+      }
+    }
+
+    array_push($totals, $total);
+  }
+
+
+  $response["totals"] = $totals;
+  $helpers->return_response($response);
+}
+
+function get_weeks($month, $year)
+{
+  $weeks = [];
+  $ym = $year . '-' . $month;
+  $final = date('t', strtotime($ym));
+  $firstSat = date('d', strtotime("first Saturday of $ym"));
+  $d = 1;
+
+  do {
+    $weekEnd = $d === 1 ? $firstSat : min($final, $d + 6);
+    $weeks[] = sprintf(
+      "%s-%02d - %s-%02d",
+      $ym,
+      $d,
+      $ym,
+      $weekEnd
+    );
+    $d = $weekEnd + 1;
+  } while ($weekEnd < $final);
+
+  return $weeks;
 }
 
 function getBarChartData($start)
@@ -202,6 +294,23 @@ function order_update()
 
   $order_id = $_POST["order_id"];
   $action = $_POST["action"];
+
+  if ($action == "not_claimed") {
+    $orderDetailsData = $helpers->select_all_with_params("order_details", "order_id='$order_id'");
+
+    if (count($orderDetailsData) > 0) {
+      foreach ($orderDetailsData as $order_detail) {
+        $product = $helpers->select_all_individual("products", "id='$order_detail->product_id'");
+
+        $product_qty = $product->quantity;
+        $order_detail_qty = $order_detail->quantity;
+
+        $new_qty = $product_qty + $order_detail_qty;
+
+        $helpers->update("products", array("quantity" => $new_qty), "id", $product->id);
+      }
+    }
+  }
 
   $orderData = array("status" => $action);
   $update = $helpers->update("orders", $orderData, "id", $order_id);
