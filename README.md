@@ -16,7 +16,7 @@
   - password: 1
 
 - System Link
- - earn-edge-e-commerce.000webhostapp.com
+  - [earn-edge-e-commerce.000webhostapp.com](https://earn-edge-e-commerce.000webhostapp.com/)
 
 - Gmail
   - thanksmaye@gmail.com
@@ -25,7 +25,7 @@
   - Mayethanks_27!
 
 - Host DB
- - name: id22109410_earn_edge
- - host: localhost
- - username: id22109410_earn_edge
- - password: Mayethanks_27!
+  - name: id22109410_earn_edge
+  - host: localhost
+  - username: id22109410_earn_edge
+  - password: Mayethanks_27!

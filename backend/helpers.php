@@ -14,7 +14,7 @@ class Helpers
     if ($_SERVER['HTTP_HOST'] == "localhost") {
       define("SERVER_NAME", "http://$_SERVER[SERVER_NAME]/earn-edge");
     } else {
-      define("SERVER_NAME", "http://$_SERVER[SERVER_NAME]");
+      define("SERVER_NAME", "https://$_SERVER[SERVER_NAME]");
     }
   }
 
