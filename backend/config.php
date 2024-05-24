@@ -1,0 +1,4 @@
+<?php
+define('PAYPAL_SANDBOX', TRUE); //TRUE=Sandbox | FALSE=Production 
+define('PAYPAL_SANDBOX_CLIENT_ID', 'Afu5jZxzcdoTjxRq3suG1z8vX847pbkAnw3EjlHwV8otcyjszJs5v_ay42WA31yh3hP0MqAkV2fNSuEz');
+define('PAYPAL_SANDBOX_CLIENT_SECRET', 'EKCdIIDNtILPZaOdQNfgaf8ZH6I0gMrJRQACrwgDdSQFeb8mU_Uysq4FLF_OMyDjtU68CZSmOYOi9Ko4');

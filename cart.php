@@ -32,7 +32,6 @@
             foreach ($carts as $cart) :
               $product = $helpers->select_all_individual("products", "id='$cart->product_id'");
               $category = $helpers->select_all_individual("categories", "id='$product->category_id'");
-
             ?>
               <tr class="rem1">
                 <td class="invert-image">
@@ -90,6 +89,9 @@
                   Place Order
                 </button>
               </li>
+              <li>
+                <div id="paypal-button-container"></div>
+              </li>
             </ul>
           </div>
           <div class="checkout-right-basket">
@@ -104,33 +106,103 @@
     </div>
   </div>
 
+  <script src="https://www.paypal.com/sdk/js?client-id=<?= PAYPAL_SANDBOX_CLIENT_ID ?>&currency=<?= $currency; ?>"></script>
   <!-- Bootstrap Core JavaScript -->
   <?php include("./components/scripts.php") ?>
   <script>
-    function handlePlaceOrder() {
-      $.ajax({
-        url: "<?= SERVER_NAME . "/backend/nodes?action=place_order" ?>",
-        type: "POST",
-        contentType: false,
-        cache: false,
-        processData: false,
-        success: function(data) {
-          const resp = $.parseJSON(data);
+    paypal.Buttons({
+      // Sets up the transaction when a payment button is clicked
+      createOrder: (data, actions) => {
+        return actions.order.create({
+          "purchase_units": [
+            <?php
+            foreach ($carts as $cart) :
+              $product = $helpers->select_all_individual("products", "id='$cart->product_id'");
+              $category = $helpers->select_all_individual("categories", "id='$product->category_id'");
+            ?> {
+                "custom_id": "PRD<?= $cart->id ?>",
+                "amount": {
+                  "currency_code": "PHP",
+                  "value": <?= intval($product->selling_price) ?>,
+                  "breakdown": {
+                    "item_total": {
+                      "currency_code": "PHP",
+                      "value": <?= intval($product->selling_price) ?>
+                    }
+                  }
+                }
+              },
+            <?php endforeach; ?>
+          ]
+        });
+      },
+      // Finalize the transaction after payer approval
+      onApprove: (data, actions) => {
+        return actions.order.capture().then(function(orderData) {
+          setProcessing(true);
 
-          swal.fire({
-            title: resp.success ? "Success" : "Error",
-            html: resp.message,
-            icon: resp.success ? "success" : "error"
-          }).then(() => resp.success ? window.location.reload() : undefined)
+          var postData = {
+            paypal_order_check: 1,
+            order_id: orderData.id
+          };
+          fetch(`<?= SERVER_NAME . "/backend/checkout" ?>`, {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json'
+              },
+              body: encodeFormData(postData)
+            })
+            .then((response) => response.json())
+            .then((result) => {
+              if (result.status == 1) {
+                handlePlaceOrder("yes")
+              } else {
+                swal.fire({
+                  title: 'Error',
+                  text: result.msg,
+                  icon: 'error',
+                })
+              }
+            })
+            .catch(error => console.log(error));
+        });
+      }
+    }).render('#paypal-button-container');
 
-        },
-        error: function(data) {
-          swal.fire({
-            title: 'Oops...',
-            text: 'Something went wrong.',
-            icon: 'error',
-          })
-        }
+    const encodeFormData = (data) => {
+      var form_data = new FormData();
+
+      for (var key in data) {
+        form_data.append(key, data[key]);
+      }
+      return form_data;
+    }
+
+    // Show a loader on payment form processing
+    const setProcessing = (isProcessing) => {
+      if (isProcessing) {
+        swal.showLoading();
+      }
+    }
+
+    function handlePlaceOrder(isPayPalPaid = null) {
+      $.post("<?= SERVER_NAME . "/backend/nodes?action=place_order" ?>", {
+        isPayPalPaid: isPayPalPaid ? isPayPalPaid : "no",
+      }, (data, status) => {
+        const resp = $.parseJSON(data);
+
+        swal.fire({
+          title: resp.success ? "Success" : "Error",
+          html: resp.message,
+          icon: resp.success ? "success" : "error"
+        }).then(() => resp.success ? window.location.reload() : undefined)
+
+      }).fail(function(e) {
+        swal.fire({
+          title: "Error!",
+          html: e.statusText,
+          icon: "error",
+        });
       });
     }
 

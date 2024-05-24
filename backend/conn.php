@@ -13,10 +13,10 @@ class Connect
       $password = "";
       $db = "earn_edge";
     } else {
-      $host = "";
-      $user = "";
-      $password = "";
-      $db = "";
+      $host = "localhost";
+      $user = "id22109410_earn_edge";
+      $password = "Mayethanks_27!";
+      $db = "id22109410_earn_edge";
     }
 
     try {

@@ -29,3 +29,7 @@
   - host: localhost
   - username: id22109410_earn_edge
   - password: Mayethanks_27!
+
+- Paypal Account
+ - sb-acddk17108805@personal.example.com
+ - ,2!2y^F)

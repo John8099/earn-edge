@@ -94,6 +94,14 @@ class Helpers
         )
       ),
       array(
+        "title" => "Expired Orders",
+        "config" => array(
+          "icon" => "fa-solid fa-clock",
+          "url" => (SERVER_NAME . "/admin/expired-orders"),
+          "is_dropdown" => false
+        )
+      ),
+      array(
         "title" => "Not Claimed Orders",
         "config" => array(
           "icon" => "fa-solid fa-sack-xmark",

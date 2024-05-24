@@ -15,20 +15,20 @@
       <img src="<?= SERVER_NAME . "/public/logo-1.jpg" ?>" style="filter: brightness(0.3);" />
       <!--Slider Description example-->
       <div class="slide-desc">
-        <h3>Buy Rice Products Are Now On Line With Us</h3>
+        <h3>Buy Products Are Now On Line With Us</h3>
       </div>
     </li>
     <li>
       <img src="<?= SERVER_NAME . "/public/logo-2.jpg" ?>" style="filter: brightness(0.3);" />
       <div class="slide-desc">
-        <h3>Whole Spices Products Are Now On Line With Us</h3>
+        <h3>Whole Products Are Now On Line With Us</h3>
       </div>
     </li>
 
     <li>
       <img src="<?= SERVER_NAME . "/public/logo-3.jpg" ?>" style="filter: brightness(0.3);" />
       <div class="slide-desc">
-        <h3>Whole Spices Products Are Now On Line With Us</h3>
+        <h3>Whole Products Are Now On Line With Us</h3>
       </div>
     </li>
   </ul>
@@ -66,6 +66,7 @@
         $products = $helpers->select_all_with_params("products", "quantity <> '0' ORDER BY id DESC LIMIT 4");
         if (count($products) > 0) :
           foreach ($products as $product) :
+            $category = $helpers->select_all_individual("categories", "id='$product->category_id'");
         ?>
             <div class="col-md-3" style="margin-top:0;margin-bottom: 40px">
               <div class="hover14 column">
@@ -81,7 +82,7 @@
                     </div>
                     <div class="snipcart-details top_brand_home_details">
                       <fieldset>
-                        <input type="button" name="submit" value="Add to cart" class="button" />
+                        <input type="button" name="submit" value="Add to cart" class="button" onclick="addToCart(`<?= $product->id ?>`, `<?= $product->quantity ?>`,`<?= $category->slug ?>`)" />
                       </fieldset>
                     </div>
                   </div>

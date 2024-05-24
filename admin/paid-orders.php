@@ -38,6 +38,8 @@
               <tbody>
                 <?php
                 $orders = $helpers->select_all_with_params("orders", "status='paid'");
+                $overallTotal = 0.00;
+
                 foreach ($orders as $order) :
                   $total = 0.00;
                   $items = 0;
@@ -50,6 +52,7 @@
                       $items += $order_detail->quantity;
                     }
                   }
+                  $overallTotal += $total;
                 ?>
                   <tr>
                     <td style="vertical-align: middle" class="cell text-start"><?= $order->order_number ?></td>
@@ -67,6 +70,12 @@
                   </tr>
                 <?php endforeach; ?>
               </tbody>
+              <tfoot class="d-none">
+                <tr>
+                  <th class="text-center">Overall Total:</th>
+                  <th colspan="5" class="text-start">  ₱ <?= number_format($overallTotal, 2) ?></th>
+                </tr>
+              </tfoot>
             </table>
           </div>
         </div>
@@ -95,6 +104,7 @@
       },
       buttons: [{
           extend: 'print',
+          footer: true,
           title: '',
           exportOptions: {
             columns: paidOrdersTableCols

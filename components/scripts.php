@@ -52,6 +52,8 @@
             return "Please enter Quantity";
           } else if (isNaN(Number(value))) {
             return "Not a valid Quantity"
+          } else if (Number(value) < 0) {
+            return "Please enter valid Quantity"
           } else if (Number(value) > Number(quantity)) {
             return "Request quantity is greater than the items left of the product";
           }

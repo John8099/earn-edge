@@ -54,6 +54,10 @@
                     <?php
                     $orders = $helpers->select_all_with_params("orders", "status='pending'");
                     foreach ($orders as $order) :
+                      if (strtotime($order->date_created) < strtotime(date("Y-m-d H:i:s")) && $order->paypal_paid == "0") {
+                        $conn->query("UPDATE orders SET `status`='expired' WHERE id='$order->id'");
+                        continue;
+                      }
                       $total = 0.00;
                       $items = 0;
 

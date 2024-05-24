@@ -104,7 +104,13 @@
                 <?php elseif ($pageTitle == "Preparing Order Details") : ?>
                   <button class="btn btn-warning" onclick="handleOrderUpdate(`<?= $_GET['id'] ?>`, 'to_pickup')">Set To Pickup</button>
                 <?php elseif ($pageTitle == "To Pick-up Order Details") : ?>
-                  <button class="btn btn-success me-2" onclick="handleOrderUpdate(`<?= $_GET['id'] ?>`, 'paid')">Set Paid</button>
+                  <button class="btn btn-success me-2" onclick="handleOrderUpdate(`<?= $_GET['id'] ?>`, 'paid')">
+                    <?php if ($orderData->paypal_paid == "1") : ?>
+                      Set Claimed
+                    <?php else : ?>
+                      Set Paid
+                    <?php endif; ?>
+                  </button>
                   <button class="btn btn-danger me-2" onclick="handleOrderUpdate(`<?= $_GET['id'] ?>`, 'not_claimed')">Set Not Claimed</button>
                 <?php endif; ?>
 

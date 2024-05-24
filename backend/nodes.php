@@ -1,5 +1,13 @@
 <?php
 session_start();
+// Product Details 
+$itemNumber = "DP12345";
+$itemName = "Demo Product";
+$itemPrice = 75;
+$currency = "PHP";
+
+include_once(__DIR__ . "/config.php");
+
 include(__DIR__ . "/conn.php");
 include(__DIR__ . "/helpers.php");
 
@@ -377,12 +385,13 @@ function cancel_order()
 
 function place_order()
 {
-  global $helpers, $conn, $_SESSION;
+  global $helpers, $conn, $_SESSION, $_POST;
 
   $orderData = array(
-    "order_number" => date("YmdHis"),
+     "order_number" => date("YmdHis"),
     "user_id" => $_SESSION["id"],
-    "status" => "pending"
+    "status" => "pending",
+    "paypal_paid" => $_POST["isPayPalPaid"] == "yes" ? "1" : "set_zero"
   );
 
   $order_id = $helpers->insert("orders", $orderData);
